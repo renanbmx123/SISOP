@@ -1,7 +1,8 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define BUFFERSZ	10
 #define STRLEN		64

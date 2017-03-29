@@ -1,8 +1,10 @@
-#include <pthread.h>
+
+#include <semaphore.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 #include <stdlib.h>
-#include <semaphore.h>
+#include <unistd.h>
 
 
 sem_t semaphore;

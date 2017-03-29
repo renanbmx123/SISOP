@@ -1,10 +1,10 @@
-#include<stdio.h>
-#include<string.h>
-#include<pthread.h>
-#include<stdlib.h>
-#include<unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-#define TOTAL 100000
+#define TOTAL 10
 unsigned int sum = 0;
 pthread_mutex_t m;
 int counter;
@@ -16,10 +16,11 @@ void *incr(){
 	counter += 1;
 
 	printf("\n Lock\n");
-	for(i=0;i<TOTAL;i++){
+
+	for(i=0;i<=TOTAL;i++){
 		pthread_mutex_lock(&m);
 		sum += 1;
-			printf("\n Job %i started\n", counter);
+			printf("\n Job %d started\n", i);
 			fflush(stdout);
 		pthread_mutex_unlock(&m);
 	}
