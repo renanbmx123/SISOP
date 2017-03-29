@@ -4,10 +4,11 @@
 #include<stdlib.h>
 #include<unistd.h>
 
-#define TOTAL 1000
+#define TOTAL 100000
 unsigned int sum = 0;
-pthread_mutex_t lock;
+pthread_mutex_t m;
 int counter;
+
 
 /* thread */
 void *incr(){
@@ -16,12 +17,11 @@ void *incr(){
 
 	printf("\n Lock\n");
 	for(i=0;i<TOTAL;i++){
-		pthread_mutex_lock(&lock);
-		
+		pthread_mutex_lock(&m);
 		sum += 1;
-			printf("\n Job %d started\n", counter);
-		
-		pthread_mutex_unlock(&lock);
+			printf("\n Job %i started\n", counter);
+			fflush(stdout);
+		pthread_mutex_unlock(&m);
 	}
 	
 	printf("\n Unlock\n");
@@ -33,6 +33,7 @@ int main(){
 	pthread_t thread1;
 	pthread_t thread2;
 
+	pthread_mutex_init(&m, NULL);
 	int i = 0;
     int err;
 
@@ -60,7 +61,7 @@ int main(){
 
 	printf("SUM: %d\n", sum);
 
-	pthread_mutex_destroy(&lock);
+	pthread_mutex_destroy(&m);
 
 	return 0;
 }
