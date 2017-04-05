@@ -25,7 +25,6 @@ int seserve(){
 	return 1;
 }
 
-
 /* Usado pelo cozinheiro para encher a travessa. */
 void enchetravessa(){
 
