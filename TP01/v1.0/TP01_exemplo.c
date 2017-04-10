@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <pthread.h>
 
 #define ESQUERDA(f) ((f + nfilosofo - 1) % nfilosofo)
@@ -57,7 +56,7 @@ void *ffuncao(void *f) {
                 filosofos[fid] = PENSANDO;
                 pthread_mutex_unlock(&garfos);
 
-                fprintf(stdout, "F[%d]: Já comigo, voltando a pensar...\n", fid);
+                fprintf(stdout, "F[%d]: Ja comido, voltando a pensar...\n", fid);
 
                 sleep(SLEEPTIME);
                 break;
@@ -75,7 +74,7 @@ int main (int argc, char **argv) {
         nfilosofo = (int) strtol(argv[1], endptr, 10);
 
         if (endptr) {
-            fprintf (stderr, "Argumento inválido: %s\n", argv[1]);
+            fprintf (stderr, "Argumento invalido: %s\n", argv[1]);
             return 1;
         }
     } else {
@@ -85,14 +84,14 @@ int main (int argc, char **argv) {
     filosofos = (Filosofo *) calloc (nfilosofo, sizeof(Filosofo));
 
     if (!filosofos) {
-        fprintf(stderr, "OS filósofos estão cansados. Não querem pensar hoje...\n");
+        fprintf(stderr, "OS filosofos estao cansados. Nao querem pensar hoje...\n");
         return 1;
     }
 
     t = (pthread_t *) calloc (nfilosofo, sizeof(pthread_t));
 
     if (!t) {
-        fprintf (stderr, "Executar ou não executar, eis a questão...\n");
+        fprintf (stderr, "Executar ou nao executar, eis a questao...\n");
         return 1;
     }
 

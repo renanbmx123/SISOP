@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <string.h>
 
 #define SEATS 5
 
