@@ -1,104 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <pthread.h>
 
-#define SEATS 5
-#define MAX_SLEEP 5
+#define CADEIRAS 5
+#define TIMEWAIT_MAX 5
 
 typedef enum {
-    think,
-    hungry,
-    eat,
-} Phil;
+    pensar,
+    fome,
+    comer, eat
+} Filosofos;
 
-int phil_left(int ph_id);
-int phil_right(int ph_id);
-void *phil_action(void *ph);
+int Filosofos_esquerda(int filo_n);
+int Filosofos_direita(int filo_n);
+void *Filosofos_checkin(void *filo);
 
 pthread_mutex_t forks;
-Phil *phils;
+Filosofos *FilosofosN;
 
 int main(){
 
     pthread_t *thread;
 
-    phils = (Phil *) calloc(SEATS, sizeof(Phil));
-    if(phils == 0){
-        printf("\nErro ao alocar filosofos!\n");
+    FilosofosN = (Filosofos *) calloc(CADEIRAS, sizeof(Filosofos));
+    if(FilosofosN == 0){
+        printf("\nErro ao alocar os filosofos!\n");
         return -1;
     }
 
-    thread = (pthread_t *) calloc(SEATS, sizeof(pthread_t));
+    thread = (pthread_t *) calloc(CADEIRAS, sizeof(pthread_t));
     if(thread == 0){
-        printf("\nErro ao alocar threads!\n");
+        printf("\nErro ao alocar as threads!\n");
         return -1;
     }
 
     pthread_mutex_init(&forks, NULL);
 
     int i;
-    for(i=0; i<SEATS; i++){
-        phils[i] = think;
-        pthread_create(&thread[i], NULL, phil_action, (void *) i);
+    for(i=0; i<CADEIRAS; i++){
+        FilosofosN[i] = pensar;
+        pthread_create(&thread[i], NULL, Filosofos_checkin, (void *) i);
     }
 
-    for(i=0; i<SEATS; i++){
+    for(i=0; i<CADEIRAS; i++){
         pthread_join(thread[i], NULL);
     }
 
     return 0;
 }
 
-int phil_left(int ph_id){
-    return (ph_id + SEATS - 1) % SEATS;
+int Filosofos_esquerda(int filo_n){
+    return (filo_n + CADEIRAS - 1) % CADEIRAS;
 }
 
-int phil_right(int ph_id){
-    return (ph_id + 1) % SEATS;
+int Filosofos_direita(int filo_n){
+    return (filo_n + 1) % CADEIRAS;
 }
 
-void *phil_action(void *ph){
-    int ph_id = (int) ph;
+void *Filosofos_checkin(void *filo){
+    int filo_n = (int) filo;
 
     while(1){
         pthread_mutex_lock(&forks);
 
-        switch(phils[ph_id]){
-            case think:
-                phils[ph_id] = hungry;
+        switch(FilosofosN[filo_n]){
+            case pensar:
+                FilosofosN[filo_n] = fome;
                 pthread_mutex_unlock(&forks);
 
-                printf("Phil #%d: Thinking\n", ph_id);
+                printf("Filosofos #%d: pensando...\n", filo_n);
 
-                sleep(random() % MAX_SLEEP);
+                sleep(random() % TIMEWAIT_MAX);
                 break;
 
-            case eat:
-                phils[ph_id] = think;
+            case comer:
+                FilosofosN[filo_n] = pensar;
                 pthread_mutex_unlock(&forks);
 
-                printf("Phil #%d: Stopped eating, back to thinking\n", ph_id);
+                printf("Filosofos #%d: Parando de comer, voltando a pensar...\n", filo_n);
 
-                sleep(random() % MAX_SLEEP);
+                sleep(random() % TIMEWAIT_MAX);
                 break;
 
-            case hungry:
-                printf("Phil #%d: Hungry...\n", ph_id);
+            case fome:
+                printf("Filosofos #%d: estou com fome...\n", filo_n);
 
-                if(phils[phil_left(ph_id)] == eat){
+                if(FilosofosN[Filosofos_esquerda(filo_n)] == comer){
                     pthread_mutex_unlock(&forks);
-                    printf("Phil #%d:       Phil #%d (left) is eating...\n", ph_id, phil_left(ph_id));
-                } else if(phils[phil_right(ph_id)] == eat){
+                    printf("Filosofos #%d:       Filosofos #%d (esquerda) esta comendo...\n", filo_n, Filosofos_esquerda(filo_n));
+                } else if(FilosofosN[Filosofos_direita(filo_n)] == comer){
                     pthread_mutex_unlock(&forks);
-                    printf("Phil #%d:       Phil #%d (right) is eating...\n", ph_id, phil_right(ph_id));
+                    printf("Filosofos #%d:       Filosofos #%d (direita) esta comendo...\n", filo_n, Filosofos_direita(filo_n));
                 }else{
-                    phils[ph_id] = eat;
+                    FilosofosN[filo_n] = comer;
                     pthread_mutex_unlock(&forks);
-                    printf("Phil #%d:       Eating!\n", ph_id);
+                    printf("Filosofos #%d:       Comendo!\n", filo_n);
                 }
 
-                sleep(random() % MAX_SLEEP);
+                sleep(random() % TIMEWAIT_MAX);
                 break;
         }
     }
